@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">MBTA App</string>
+    <string name="refresh_button">Refresh</string>
+    <string name="northbound">Northbound</string>
+    <string name="southbound">Southbound</string>
+    <string name="trip_template" formatted="false"><b>%s:</b> %s</string>
+    <string name="alerts_template" formatted="false">%s</string>
+    <string name="alerts">Alerts</string>
+    <string name="station">Station</string>
+    <string name="no_data">No Data</string>
+
+    <string-array name="stop_list">
+        <item id="1">Alewife</item>
+        <item id="2">Davis</item>
+        <item id="3">Porter</item>
+        <item id="4">Harvard</item>
+        <item id="5">Central</item>
+        <item id="6">Kendall/MIT</item>
+        <item id="7">Charles/MGH</item>
+        <item id="8">Park Street</item>
+        <item id="9">Downtown Crossing</item>
+        <item id="10">South Station</item>
+        <item id="11">Broadway</item>
+        <item id="12">Andrew</item>
+        <item id="13">JFK/U-Mass</item>
+        <item id="14">Savin Hill</item>
+        <item id="15">Fields Corner</item>
+        <item id="16">Shawmut</item>
+        <item id="17">Ashmont</item>
+        <item id="18">North Quincy</item>
+        <item id="19">Wollaston</item>
+        <item id="20">Quincy Center</item>
+        <item id="21">Quincy Adams</item>
+        <item id="22">Braintree</item>
+    </string-array>
+
+    <string-array name="api_stop_list">
+        <item id="1">place-alfcl</item>
+        <item id="2">place-davis</item>
+        <item id="3">place-portr</item>
+        <item id="4">place-harsq</item>
+        <item id="5">place-cntsq</item>
+        <item id="6">place-knncl</item>
+        <item id="7">place-chmnl</item>
+        <item id="8">place-pktrm</item>
+        <item id="9">place-dwnxg</item>
+        <item id="10">place-sstat</item>
+        <item id="11">place-brdwy</item>
+        <item id="12">place-andrw</item>
+        <item id="13">place-jfk</item>
+        <item id="14">place-shmnl</item>
+        <item id="15">place-fldcr</item>
+        <item id="16">place-smmnl</item>
+        <item id="17">place-asmnl</item>
+        <item id="18">place-nqncy</item>
+        <item id="19">place-wlsta</item>
+        <item id="20">place-qnctr</item>
+        <item id="21">place-qamnl</item>
+        <item id="22">place-brntn</item>
+    </string-array>
+</resources>
