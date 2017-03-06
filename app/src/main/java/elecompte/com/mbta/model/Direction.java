@@ -16,6 +16,9 @@ public class Direction {
     @JsonProperty("trip")
     public List<Trip> trip = new ArrayList<>();
 
+    @JsonProperty("stop")
+    public List<Stop> stops = new ArrayList<>();
+
 
     public List<Trip> getNearestTrips() {
         Collections.sort(trip);

@@ -15,6 +15,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="35dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/loadingIcon"
+        android:layout_gravity="center"
+        />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +36,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/stopSelector"
         android:layout_gravity="center_horizontal"
-        style="@style/Base.Widget.AppCompat.ListView.DropDown"
+        style="@style/Base.Widget.AppCompat.ListView.Menu"
         android:spinnerMode="dialog"
         android:layout_marginTop="20dp"
         />

@@ -15,11 +15,12 @@ import retrofit.android.AndroidLog;
 import retrofit.client.OkClient;
 import retrofit.converter.JacksonConverter;
 
-public class Access {
+class Access {
 
     private static final int TIMEOUT = 15; // Seconds
     private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
-    private static final String TAG = "Access";
+    //private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.HEADERS_AND_ARGS;
+    private static final String TAG = "HTTP";
 
 
     private static Access instance;
@@ -34,7 +35,7 @@ public class Access {
      *
      * @return instance
      */
-    public static Access getInstance() {
+    static Access getInstance() {
         if (instance == null) {
             synchronized (Access.class) {
                 // Double check
@@ -64,7 +65,7 @@ public class Access {
     }
 
 
-    public MbtaApi getMbtaApi() {
+    MbtaApi getMbtaApi() {
         if (mbtaApi != null) return (mbtaApi);
 
         RestAdapter adapter = getRestAdapter("http://realtime.mbta.com");
@@ -73,7 +74,7 @@ public class Access {
         return (mbtaApi);
     }
 
-    public RestAdapter getRestAdapter(String endpoint) {
+    private RestAdapter getRestAdapter(String endpoint) {
         RestAdapter.Builder builder = new RestAdapter.Builder();
         builder.setClient(okClient);
 
