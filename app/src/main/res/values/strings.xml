@@ -3,8 +3,8 @@
     <string name="refresh_button">Refresh</string>
     <string name="northbound">Northbound</string>
     <string name="southbound">Southbound</string>
-    <string name="trip_template" formatted="false"><b>%s:</b> %s</string>
-    <string name="alerts_template" formatted="false">%s</string>
+    <string name="trip_template">%1$s: %2$s</string>
+    <string name="alerts_template">%1$s</string>
     <string name="alerts">Alerts</string>
     <string name="station">Station</string>
     <string name="no_data">No Data</string>

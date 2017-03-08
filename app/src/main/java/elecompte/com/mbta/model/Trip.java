@@ -26,6 +26,11 @@ public class Trip implements Comparable<Trip> {
     public String getPreAwayFormatted() {
         Integer minutes = Integer.parseInt(preAway) / 60;
         Integer seconds = Integer.parseInt(preAway) % 60;
+        if (minutes < 1 && seconds > 30) {
+            return "Approaching";
+        } else if (minutes < 1 && seconds <= 30) {
+            return "Arriving";
+        }
         return (minutes + "m" + seconds + "s");
     }
 

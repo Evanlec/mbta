@@ -155,6 +155,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    protected void clearData() {
+        northboundView.setText("");
+        northboundView2.setText("");
+        southboundView.setText("");
+        southboundView2.setText("");
+        alerts.setText("");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,10 +198,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         stopSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                northboundView.setText("");
-                northboundView2.setText("");
-                southboundView.setText("");
-                southboundView2.setText("");
+                clearData();
                 httpRunner.run();
             }
 
@@ -216,8 +221,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         stopSelector.setAdapter(dataAdapter);
         stopSelector.setSelection(0);
 
-        selectedStop = apiStops.get(stopSelector.getSelectedItemPosition());
-
 
         mHandler = new Handler();
         httpRunner = new Runnable() {
@@ -226,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 try {
                     Log.d("httpRunner", "show network icon");
                     networkSyncIcon.setVisibility(View.VISIBLE);
-                    getPredictions(selectedStop);
+                    getPredictions(apiStops.get(stopSelector.getSelectedItemPosition()));
                 } finally {
                     mHandler.removeCallbacks(this);
                     mHandler.postDelayed(httpRunner, mInterval);
@@ -238,9 +241,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onStart() {
         mGoogleApiClient.connect();
+        clearData();
         Log.i("onStart", "onStart: " + mGoogleApiClient.isConnecting());
         super.onStart();
-        httpRunner.run();
     }
 
     @Override
@@ -293,11 +296,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 } else {
                     List<Trip> northTrips = northDirection.getNearestTrips();
                     String northPrediction = northTrips.get(0).getPreAwayFormatted();
-                    northboundView.setText(String.format(tripTemplate, northTrips.get(0).tripHeadsign.toUpperCase(), northPrediction));
+                    northboundView.setText(String.format(tripTemplate, northTrips.get(0).tripHeadsign, northPrediction));
                     // we might not have more than 1 trip, so use try/catch here
                     try {
                         String northPrediction2 = northTrips.get(1).getPreAwayFormatted();
-                        northboundView2.setText(String.format(tripTemplate, northTrips.get(1).tripHeadsign.toUpperCase(), northPrediction2));
+                        northboundView2.setText(String.format(tripTemplate, northTrips.get(1).tripHeadsign, northPrediction2));
                     } catch (IndexOutOfBoundsException e) {
                         northboundView2.setText(R.string.no_data);
                         return;
