@@ -21,6 +21,8 @@ public class Stop implements Comparable<Stop> {
     public String stopLat;
     @JsonProperty("stop_lon")
     public String stopLon;
+    @JsonIgnore
+    private Float distance = 0.0f;
 
     public Double getStopLat() {
         return Double.parseDouble(stopLat);
@@ -29,9 +31,6 @@ public class Stop implements Comparable<Stop> {
         return Double.parseDouble(stopLon);
     }
 
-    @JsonIgnore
-    private Float distance = 0.0f;
-
     public Float getDistance() {
         return this.distance;
     }
@@ -39,8 +38,6 @@ public class Stop implements Comparable<Stop> {
     public void setDistance(Float distance) {
         this.distance = distance;
     }
-
-    //public double getLongitude() { return Double.parseDouble(this.stopLon); }
 
     public String getStopId() {
         return stopId;

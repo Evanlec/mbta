@@ -1,13 +1,11 @@
 <resources>
     <string name="app_name">MBTA App</string>
-    <string name="refresh_button">Refresh</string>
     <string name="northbound">Northbound</string>
     <string name="southbound">Southbound</string>
-    <string name="trip_template">%1$s: %2$s</string>
     <string name="alerts_template">%1$s</string>
     <string name="alerts">Alerts</string>
     <string name="station">Station</string>
-    <string name="no_data">No Data</string>
+    <string name="trip_default_text">Alewife: 3m30s</string>
 
     <string-array name="stop_list">
         <item id="1">Alewife</item>

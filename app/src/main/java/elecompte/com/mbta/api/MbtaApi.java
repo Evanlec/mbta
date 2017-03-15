@@ -1,34 +1,22 @@
 package elecompte.com.mbta.api;
 
 import elecompte.com.mbta.model.PredictionsByStop;
-import elecompte.com.mbta.model.StopsByLocation;
 import elecompte.com.mbta.model.StopsByRoute;
-import retrofit.Callback;
-import retrofit.http.GET;
-import retrofit.http.Query;
+import io.reactivex.Observable;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public interface MbtaApi {
-    @GET("/developer/api/v2/predictionsbystop")
-    void getPredictionsByStop(
+    @GET("predictionsbystop")
+    Observable<PredictionsByStop> getPredictionsByStop(
             @Query("api_key") String apiKey,
             @Query("stop") String stop,
-            @Query("format") String format,
-            Callback<PredictionsByStop> callback
+            @Query("format") String format
     );
-    @GET("/developer/api/v2/stopsbylocation")
-    void getStopsByLocation(
-            @Query("api_key") String apiKey,
-            @Query("lat") String lat,
-            @Query("lon") String lon,
-            @Query("format") String format,
-            Callback<StopsByLocation> callback
-    );
-    @GET("/developer/api/v2/stopsbyroute")
-    void getStopsByRoute(
+    @GET("stopsbyroute")
+    Observable<StopsByRoute> getStopsByRoute(
             @Query("api_key") String apiKey,
             @Query("route") String route,
-            @Query("format") String format,
-            Callback<StopsByRoute> callback
+            @Query("format") String format
     );
-
 }

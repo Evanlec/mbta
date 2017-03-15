@@ -1,6 +1,8 @@
 
 package elecompte.com.mbta.model;
 
+import android.text.TextUtils;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ public class PredictionsByStop {
     public String stopName;
     @JsonProperty("mode")
     public List<Mode> mode = new ArrayList<>();
+    @JsonProperty("alert_headers")
+    public List<AlertHeader> alertHeaders = new ArrayList<>();
 
     public String getStopId() {
         return stopId;
@@ -29,21 +33,17 @@ public class PredictionsByStop {
     }
 
     public Mode getModeByType(String type) {
-
         for (Mode m : mode) {
             if (m.routeType.equals(type)) {
                 return m;
             }
         }
-
         return null;
     }
 
-    public List<AlertHeader> getAlertHeaders() {
-        return alertHeaders;
+    public String getAlertHeadersConcat() {
+        return TextUtils.join("\n", this.alertHeaders);
     }
 
-    @JsonProperty("alert_headers")
-    public List<AlertHeader> alertHeaders = new ArrayList<>();
 
 }

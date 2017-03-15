@@ -13,4 +13,9 @@ public class AlertHeader {
     @JsonProperty("effect_name")
     public String effectName;
 
+    @Override
+    public String toString() {
+        return String.format("%s -- %s", this.effectName, this.headerText);
+    }
+
 }

@@ -24,14 +24,22 @@ public class Trip implements Comparable<Trip> {
     public Vehicle vehicle;
 
     public String getPreAwayFormatted() {
+        String time;
         Integer minutes = Integer.parseInt(preAway) / 60;
         Integer seconds = Integer.parseInt(preAway) % 60;
         if (minutes < 1 && seconds > 30) {
-            return "Approaching";
+            time = "Approaching";
         } else if (minutes < 1 && seconds <= 30) {
-            return "Arriving";
+            time = "Arriving";
+        } else {
+            time = minutes + "m" + seconds + "s";
         }
-        return (minutes + "m" + seconds + "s");
+        return (tripHeadsign + ": " + time);
+    }
+
+    @Override
+    public String toString() {
+        return getPreAwayFormatted();
     }
 
     // for sorting by closest train first

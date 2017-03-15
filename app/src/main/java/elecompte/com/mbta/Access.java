@@ -5,29 +5,24 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
 
 import elecompte.com.mbta.api.MbtaApi;
-import retrofit.RestAdapter;
-import retrofit.android.AndroidLog;
-import retrofit.client.OkClient;
-import retrofit.converter.JacksonConverter;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 class Access {
 
-    private static final int TIMEOUT = 15; // Seconds
-    private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.BASIC;
-    //private static final RestAdapter.LogLevel LOGLEVEL = RestAdapter.LogLevel.HEADERS_AND_ARGS;
+    private static final int TIMEOUT = 5; // Seconds
     private static final String TAG = "HTTP";
 
-
+    private ObjectMapper mapper = new ObjectMapper();
     private static Access instance;
-
-    private OkClient okClient;
-    private JacksonConverter converter;
-
     private MbtaApi mbtaApi;
 
     /**
@@ -48,46 +43,36 @@ class Access {
     }
 
     private Access() {
-        // Make HTTP client
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.setConnectTimeout(TIMEOUT, TimeUnit.SECONDS);
-        okHttpClient.setReadTimeout(TIMEOUT, TimeUnit.SECONDS);
-        okHttpClient.setFollowRedirects(false);
-        okClient = new OkClient(okHttpClient);
-
         // Make JSON converter
-        ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        converter = new JacksonConverter(mapper);
     }
 
+    private OkHttpClient getOkHttpClient() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        OkHttpClient.Builder okClientBuilder = new OkHttpClient.Builder();
+        okClientBuilder.connectTimeout(TIMEOUT, TimeUnit.SECONDS);
+        okClientBuilder.readTimeout(TIMEOUT, TimeUnit.SECONDS);
+        okClientBuilder.addInterceptor(interceptor);
+        return okClientBuilder.build();
+    }
 
     MbtaApi getMbtaApi() {
         if (mbtaApi != null) return (mbtaApi);
 
-        RestAdapter adapter = getRestAdapter("http://realtime.mbta.com");
-        mbtaApi = adapter.create(MbtaApi.class);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://realtime.mbta.com/developer/api/v2/")
+                .client(getOkHttpClient())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+                .addConverterFactory(JacksonConverterFactory.create(mapper))
+                .build();
+
+        mbtaApi = retrofit.create(MbtaApi.class);
 
         return (mbtaApi);
-    }
-
-    private RestAdapter getRestAdapter(String endpoint) {
-        RestAdapter.Builder builder = new RestAdapter.Builder();
-        builder.setClient(okClient);
-
-        if (endpoint == null) return (null);
-
-        builder.setEndpoint(endpoint);
-
-        builder.setConverter(converter);
-
-        builder.setLogLevel(LOGLEVEL);
-        builder.setLog(new AndroidLog(TAG));
-
-        return builder.build();
     }
 
 

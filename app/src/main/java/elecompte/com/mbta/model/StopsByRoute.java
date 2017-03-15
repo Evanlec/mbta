@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.List;
 
-
 public class StopsByRoute {
 
     @JsonProperty("route_name")
@@ -17,26 +16,17 @@ public class StopsByRoute {
     @JsonProperty("direction")
     public List<Direction> direction;
 
-   public Direction getDirectionByDirectionId(String id) {
-        for (Direction d : direction) {
-            if (d.directionId.equals(id)) {
-                return d;
+    public static Stop getNearestStop(List<Stop> stops, Location lastLocation) {
+        if (stops != null) {
+            for (Stop stop : stops) {
+                Location l = new Location("none");
+                l.setLatitude(stop.getStopLat());
+                l.setLongitude(stop.getStopLon());
+                stop.setDistance(lastLocation.distanceTo(l));
             }
+            Collections.sort(stops);
+            return stops.get(0);
         }
         return null;
-    }
-
-    public static Stop getNearestStop(List<Stop> stops, Location location) {
-
-        for (Stop s : stops) {
-            Location l = new Location("foo");
-            l.setLatitude(s.getStopLat());
-            l.setLongitude(s.getStopLon());
-            s.setDistance(location.distanceTo(l));
-        }
-
-
-        Collections.sort(stops);
-        return stops.get(0);
     }
 }
