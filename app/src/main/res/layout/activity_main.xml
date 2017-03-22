@@ -62,7 +62,7 @@
         android:clipToPadding="true"
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false"
-        />
+        android:scrollbars="none" />
 
     <TextView
         android:id="@+id/textViewSouthboundLabel"
@@ -79,9 +79,8 @@
         android:layout_width="match_parent"
         android:layout_height="88dp"
         android:layout_marginTop="20dp"
-        android:dividerHeight="0dp"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false" />
+        android:isScrollContainer="false"
+        android:scrollbars="none" />
 
     <TextView
         android:id="@android:id/empty"

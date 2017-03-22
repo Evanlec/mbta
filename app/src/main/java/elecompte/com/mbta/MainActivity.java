@@ -27,9 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import elecompte.com.mbta.api.MbtaApi;
-import elecompte.com.mbta.model.Direction;
-import elecompte.com.mbta.model.Mode;
-import elecompte.com.mbta.model.Route;
 import elecompte.com.mbta.model.Stop;
 import elecompte.com.mbta.model.StopsByRoute;
 import elecompte.com.mbta.model.Trip;
@@ -59,14 +56,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private String alertTemplate;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private List<Trip> northTrips = new ArrayList<>();
-    private List<Trip> southTrips = new ArrayList<>();
-
     public ProgressBar networkSyncIcon;
     private TextView alerts;
-    private ArrayAdapter northboundAdapter;
-    private ArrayAdapter southboundAdapter;
     private Spinner stopSelector;
+
+    private List<Trip> northTrips = new ArrayList<>();
+    private List<Trip> southTrips = new ArrayList<>();
+    private ArrayAdapter<Trip> northboundAdapter;
+    private ArrayAdapter<Trip> southboundAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         ListView southboundListView = (ListView) findViewById(R.id.southboundListView);
         southboundListView.setAdapter(southboundAdapter);
-
 
         alertTemplate = getString(R.string.alerts_template);
 
@@ -161,42 +157,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onDestroy() {
         Log.d("onDestroy", "");
+        mGoogleApiClient.disconnect();
         super.onDestroy();
     }
 
     private void getPredictions(String stop) {
         clearDisplay();
-        Log.d("getPredictions", mHandler.toString());
+        Log.d("getPredictionsByStop", "stop: " + stop);
 
         api.getPredictionsByStop(API_KEY, stop, FORMAT)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(predictionsByStop -> {
-                    Log.d("getPredictionsByStop", "stop: " + stop);
-                    // see if there are any alerts
-                    if (predictionsByStop.alertHeaders != null) {
-                        alerts.setText(String.format(alertTemplate, predictionsByStop.getAlertHeadersConcat()));
+                .map(predictionsByStop -> {
+                    alerts.setText(String.format(alertTemplate, predictionsByStop.getAlertHeadersConcat()));
+                    return predictionsByStop.getModeByType(MODE_SUBWAY);
+                })
+                .map(mode -> mode.getRouteById(ROUTE_REDLINE).direction)
+                .flatMap(Observable::fromIterable)
+                .subscribe(direction -> {
+
+                    if (direction.directionId.equals(DIRECTION_NORTH)) {
+                        northboundAdapter.addAll(direction.trips.subList(0,2));
+                        Log.d("getPredictionsByStop", "getNearestTrips: " + direction.trips.subList(0,2));
                     }
-
-                    Mode mode = predictionsByStop.getModeByType(MODE_SUBWAY);
-                    if (mode == null) { return; }
-                    Route route = mode.getRouteById(ROUTE_REDLINE);
-
-                    // northbound
-                    Direction northDirection = route.getDirectionByDirectionId(DIRECTION_NORTH);
-                    if (northDirection != null) {
-                        northTrips.clear();
-                        northTrips.addAll(northDirection.getNearestTrips());
-                        northboundAdapter.notifyDataSetChanged();
-                        Log.d("getPredictionsByStop", "northTrips: " + northTrips);
-                    }
-
-                    // southbound
-                    Direction southDirection = route.getDirectionByDirectionId(DIRECTION_SOUTH);
-                    if (southDirection != null) {
-                        southTrips.clear();
-                        southTrips.addAll(southDirection.getNearestTrips());
-                        Log.d("getPredictionsByStop", "southTrips: " + southTrips);
-                        southboundAdapter.notifyDataSetChanged();
+                    if (direction.directionId.equals(DIRECTION_SOUTH)) {
+                        southboundAdapter.addAll(direction.trips.subList(0,2));
+                        Log.d("getPredictionsByStop", "direction.trips: " + direction.trips.subList(0,2));
                     }
 
                     networkSyncIcon.setVisibility(View.INVISIBLE);
@@ -219,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.d("onConnected", "onConnected");
+        Log.d("onConnected", "Google API client connected");
         if (!checkFineLocationPermission()) {
             Log.w("onConnected", "lacking fine location permission!");
             Log.i("onConnected", "asking for permissions");
@@ -254,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .flatMap(stopsByRoute ->  Observable.fromIterable(stopsByRoute.direction))
                 .filter(direction -> direction.directionId.equals(DIRECTION_SOUTH))
                 .map(direction -> direction.stops)
-                .cache()
                 .subscribe(stops -> {
                             stopList = stops;
                             Log.d("stopsByRouteObservable", "stopList set" + stopList);
